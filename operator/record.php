@@ -1185,7 +1185,7 @@ body {
 
             <div class="main-title">
 
-                Operator Records
+                Operator 
 
             </div>
 
