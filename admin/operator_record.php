@@ -1703,22 +1703,14 @@ tbody tr:not(.total-row):hover td {
 
                                     <!-- EDIT -->
 
-                                    <a
-                                        href="form.php?edit_id=<?= (int)$row['id'] ?>"
-                                        class="edit-btn"
-                                    >
-
-                                        <i
-                                            class="
-                                                fa-solid
-                                                fa-pen-to-square
-                                            "
-                                        ></i>
-
-                                        Edit
-
-                                    </a>
-
+                              <!-- EDIT -->
+<a
+    href="form.php?edit_id=<?= (int)$row['id'] ?>"
+    class="edit-btn"
+>
+    <i class="fa-solid fa-pen-to-square"></i>
+    Edit
+</a>
 
                                     <!-- DELETE -->
 <!-- DELETE -->
