@@ -1721,28 +1721,24 @@ tbody tr:not(.total-row):hover td {
 
 
                                     <!-- DELETE -->
+<!-- DELETE -->
+<form
+    action="delete.php"
+    method="POST"
+    style="display:inline;"
+    onsubmit="return confirm('Are you sure you want to delete this record?');"
+>
+    <input
+        type="hidden"
+        name="id"
+        value="<?= (int)$row['id'] ?>"
+    >
 
-                                    <a
-                                        href="delete.php?id=<?= (int)$row['id'] ?>"
-                                        class="delete-btn"
-                                        onclick="
-                                            return confirm(
-                                                'Are you sure you want to delete this record?'
-                                            );
-                                        "
-                                    >
-
-                                        <i
-                                            class="
-                                                fa-solid
-                                                fa-trash
-                                            "
-                                        ></i>
-
-                                        Delete
-
-                                    </a>
-
+    <button type="submit" class="delete-btn">
+        <i class="fa-solid fa-trash"></i>
+        Delete
+    </button>
+</form>
 
                                 </td>
 
