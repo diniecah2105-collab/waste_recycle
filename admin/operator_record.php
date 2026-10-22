@@ -1,3 +1,4 @@
+
 <?php
 session_start();
 include __DIR__ . "/../db.php";
@@ -15,7 +16,7 @@ if (
 
 /* ========================================
    DELETE OPERATOR RECORD
-   Tidak memerlukan delete.php
+   DELETE TERUS DALAM FAIL INI
 ======================================== */
 if (
     $_SERVER['REQUEST_METHOD'] === 'POST' &&
@@ -29,11 +30,17 @@ if (
             "DELETE FROM operator WHERE id = ?"
         );
 
-        if ($stmt) {
-            mysqli_stmt_bind_param($stmt, "i", $id);
-            mysqli_stmt_execute($stmt);
-            mysqli_stmt_close($stmt);
+        if (!$stmt) {
+            die("Database error: " . mysqli_error($conn));
         }
+
+        mysqli_stmt_bind_param($stmt, "i", $id);
+
+        if (!mysqli_stmt_execute($stmt)) {
+            die("Delete failed: " . mysqli_stmt_error($stmt));
+        }
+
+        mysqli_stmt_close($stmt);
     }
 
     header("Location: operator_record.php");
@@ -107,10 +114,8 @@ $month_names = [
 
 <title>Operator Records - Waste Recycle</title>
 
-<link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
->
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
 <style>
 * {
@@ -554,7 +559,6 @@ tbody tr:not(.total-row):hover td {
 
     <div class="logo-box">
         <img src="../img/LogoNichias.jpg" alt="NICHIAS Logo">
-
         <div class="system-title">ADMIN SYSTEM</div>
         <div class="system-subtitle">Waste Recycle</div>
     </div>
@@ -562,7 +566,6 @@ tbody tr:not(.total-row):hover td {
     <div class="sidebar-line"></div>
 
     <div class="menu">
-
         <a href="dashboard.php">
             <span class="menu-icon">
                 <i class="fa-solid fa-chart-pie"></i>
@@ -590,7 +593,6 @@ tbody tr:not(.total-row):hover td {
             </span>
             <span>Operator Records</span>
         </a>
-
     </div>
 
     <div class="logout">
@@ -613,7 +615,6 @@ tbody tr:not(.total-row):hover td {
         <div class="top-actions">
             <div class="search-box">
                 <i class="fa-solid fa-magnifying-glass"></i>
-
                 <input
                     type="text"
                     id="monthSearch"
@@ -628,7 +629,7 @@ tbody tr:not(.total-row):hover td {
 
         <div class="empty">
             <i class="fa-solid fa-folder-open"></i>
-            <br>
+            <br><br>
             No operator records found.
         </div>
 
@@ -681,9 +682,7 @@ tbody tr:not(.total-row):hover td {
                                 <?= htmlspecialchars($year) ?>
                             </h2>
 
-                            <p>
-                                <?= count($records) ?> record(s)
-                            </p>
+                            <p><?= count($records) ?> record(s)</p>
                         </div>
 
                     </div>
@@ -710,7 +709,6 @@ tbody tr:not(.total-row):hover td {
                 <div class="month-content">
 
                     <table>
-
                         <thead>
                             <tr>
                                 <th>No.</th>
@@ -730,7 +728,6 @@ tbody tr:not(.total-row):hover td {
                         <?php foreach ($records as $row): ?>
 
                             <tr>
-
                                 <td><?= $no++ ?></td>
 
                                 <td>
@@ -773,7 +770,7 @@ tbody tr:not(.total-row):hover td {
 
                                 <td class="action-cell">
 
-                                    <!-- EDIT -->
+                                    <!-- EDIT: KEKAL GUNA form.php -->
                                     <a
                                         href="form.php?edit_id=<?= (int)$row['id'] ?>"
                                         class="edit-btn"
@@ -782,9 +779,10 @@ tbody tr:not(.total-row):hover td {
                                         Edit
                                     </a>
 
-                                    <!-- DELETE: SAME FILE -->
+                                    <!-- DELETE: DALAM FAIL INI -->
                                     <form
                                         method="POST"
+                                        action="operator_record.php"
                                         style="display:inline;"
                                         onsubmit="return confirm('Are you sure you want to delete this record?');"
                                     >
@@ -804,7 +802,6 @@ tbody tr:not(.total-row):hover td {
                                     </form>
 
                                 </td>
-
                             </tr>
 
                         <?php endforeach; ?>
@@ -829,11 +826,9 @@ tbody tr:not(.total-row):hover td {
                             </tr>
 
                         </tbody>
-
                     </table>
 
                 </div>
-
             </div>
 
             <?php $month_index++; ?>
@@ -844,7 +839,7 @@ tbody tr:not(.total-row):hover td {
 
         <div id="noSearch" class="no-search">
             <i class="fa-solid fa-calendar-xmark"></i>
-            <br>
+            <br><br>
             No month found.
         </div>
 
@@ -867,6 +862,7 @@ document.querySelectorAll('.month-header').forEach(function(header) {
 
         const section = this.closest('.month-section');
         section.classList.toggle('open');
+
     });
 
 });
