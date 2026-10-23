@@ -269,6 +269,165 @@ body {
     flex-direction: column;
 }
 
+.top-header {
+    height: 70px;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 30px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.operator-profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.profile-icon {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background: #e8eaf6;
+    color: #1e1768;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logout-btn {
+    color: #1e1768;
+    font-size: 18px;
+    text-decoration: none;
+    padding: 8px;
+}
+
+.main {
+    padding: 30px;
+    width: 100%;
+}
+
+.page-title {
+    font-size: 25px;
+    color: #1e1768;
+    margin-bottom: 8px;
+}
+
+.subtitle {
+    font-size: 14px;
+    color: #777;
+    margin-bottom: 25px;
+}
+
+.form-card {
+    background: #fff;
+    padding: 28px;
+    border-radius: 12px;
+    box-shadow: 0 3px 15px rgba(0,0,0,0.06);
+    max-width: 1000px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+
+.form-group label {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #d5d8e2;
+    border-radius: 7px;
+    font-size: 14px;
+    background: #fff;
+}
+
+.actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 28px;
+    flex-wrap: wrap;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 7px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-save {
+    background: #1e1768;
+    color: white;
+}
+
+.btn-reset {
+    background: #e9ebf2;
+    color: #333;
+}
+
+.alert {
+    padding: 13px 16px;
+    border-radius: 7px;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+.alert.success {
+    background: #e7f7ed;
+    color: #176b37;
+}
+
+.alert.error {
+    background: #fdeaea;
+    color: #a12626;
+}
+
+@media (max-width: 700px) {
+    .main {
+        padding: 18px;
+    }
+
+    .form-card {
+        padding: 18px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .top-header {
+        padding: 0 15px;
+    }
+}
 /* RESPONSIVE */
 @media (max-width: 900px) {
     .sidebar {
@@ -362,6 +521,31 @@ body {
 
 
 <div class="main">
+
+
+<div class="right-side">
+
+    <div class="top-header">
+        <div class="header-right">
+            <div class="operator-profile">
+                <span class="profile-icon">
+                    <i class="fa-solid fa-user"></i>
+                </span>
+                <span>OPERATOR</span>
+            </div>
+
+            <a href="../login.php" class="logout-btn">
+                <i class="fa-solid fa-right-from-bracket"></i>
+            </a>
+        </div>
+    </div>
+
+    <div class="main">
+
+        <!-- KEKALKAN SEMUA KOD FORM ASAL DI SINI -->
+
+    </div>
+
 
     <h1 class="page-title">
         <i class="fa-solid fa-users"></i>
