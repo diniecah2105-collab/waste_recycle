@@ -771,8 +771,8 @@ tbody tr:not(.total-row):hover td {
                                 <td class="action-cell">
 
                                     <!-- EDIT: KEKAL GUNA form.php -->
-                                    <a
-                                        href="form.php?edit_id=<?= (int)$row['id'] ?>"
+                                    <<a
+                                        href="../operator/edit.php?id=<?= (int)$row['id'] ?>"
                                         class="edit-btn"
                                     >
                                         <i class="fa-solid fa-pen-to-square"></i>

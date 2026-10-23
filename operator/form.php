@@ -164,216 +164,202 @@ body {
     color: #222;
 }
 
+/* SIDEBAR */
 .sidebar {
     width: 235px;
-    height: 100vh;
+    min-height: 100vh;
     background: #1e1768;
     color: white;
     position: fixed;
-    top: 0;
     left: 0;
-    padding: 25px 15px;
+    top: 0;
+    bottom: 0;
+    flex-shrink: 0;
+    overflow-y: auto;
 }
 
-.logo {
-    text-align: center;
-    margin-bottom: 35px;
-}
-
-.logo img {
-    width: 150px;
-    max-width: 100%;
-    background: white;
-    padding: 8px;
-    border-radius: 8px;
-}
-
-.sidebar a {
-    display: block;
-    color: white;
-    text-decoration: none;
-    padding: 14px 15px;
-    margin-bottom: 8px;
-    border-radius: 7px;
-    font-size: 14px;
-}
-
-.sidebar a:hover,
-.sidebar a.active {
-    background: #40369a;
-}
-
-.sidebar a i {
-    width: 25px;
-}
-
-.main {
-    margin-left: 235px;
-    padding: 30px;
-}
-
-.page-title {
-    color: #243b7a;
-    font-size: 27px;
-    margin-bottom: 8px;
-}
-
-.subtitle {
-    color: #777;
-    margin-bottom: 25px;
-    font-size: 14px;
-}
-
-.form-card {
-    background: white;
-    max-width: 850px;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(0,0,0,.06);
-}
-
-.form-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-}
-
-.form-group {
-    margin-bottom: 20px;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 8px;
-    font-size: 14px;
-    font-weight: bold;
-    color: #333;
-}
-
-.form-group input,
-.form-group select {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #d5d9e4;
-    border-radius: 7px;
-    font-size: 14px;
-}
-
-.form-group input:focus,
-.form-group select:focus {
-    outline: none;
-    border-color: #2f4da0;
-}
-
-.actions {
+/* LOGO AREA */
+.logo-area {
+    height: 145px;
     display: flex;
-    gap: 10px;
-    margin-top: 5px;
-}
-
-.btn {
-    border: none;
-    padding: 12px 20px;
-    border-radius: 7px;
-    color: white;
-    text-decoration: none;
-    cursor: pointer;
-    font-size: 14px;
-    display: inline-flex;
-    gap: 8px;
     align-items: center;
     justify-content: center;
+    padding: 15px;
+    border-bottom: 1px solid rgba(255,255,255,0.18);
 }
 
-.btn-save {
-    background: #243b7a;
+.logo-area img {
+    width: 72px;
+    height: 72px;
+    object-fit: contain;
+    background: #fff;
+    padding: 5px;
+    display: block;
 }
 
-.btn-save:hover {
-    background: #2f4da0;
+/* SIDEBAR TITLE */
+.sidebar-title {
+    text-align: center;
+    padding: 18px 10px 5px;
 }
 
-.btn-reset {
-    background: #6c757d;
+.sidebar-title h2 {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    line-height: 1.4;
 }
 
-.alert {
-    padding: 13px;
-    margin-bottom: 20px;
+.sidebar-title p {
+    font-size: 10px;
+    color: rgba(255,255,255,0.70);
+    margin-top: 3px;
+}
+
+.sidebar-line {
+    height: 1px;
+    background: rgba(255,255,255,0.18);
+    margin: 18px 18px 20px;
+}
+
+/* MENU */
+.menu {
+    padding: 0 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.menu a {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    width: 100%;
+    padding: 12px 14px;
+    color: rgba(255,255,255,0.90);
+    text-decoration: none;
     border-radius: 7px;
-    font-size: 14px;
+    font-size: 13.5px;
+    font-weight: 600;
+    transition: 0.2s;
 }
 
-.success {
-    background: #d9f7e3;
-    color: #176b35;
+.menu a i {
+    width: 20px;
+    text-align: center;
+    font-size: 15px;
 }
 
-.error {
-    background: #ffe5e5;
-    color: #b42323;
+.menu a:hover {
+    background: rgba(255,255,255,0.10);
+    color: #fff;
 }
 
-@media(max-width: 800px) {
+.menu a.active {
+    background: rgba(255,255,255,0.18);
+    color: #fff;
+}
+
+/* RIGHT SIDE */
+.right-side {
+    flex: 1;
+    min-width: 0;
+    margin-left: 235px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+    .sidebar {
+        width: 210px;
+    }
+
+    .right-side {
+        margin-left: 210px;
+    }
+}
+
+@media (max-width: 700px) {
     .sidebar {
         width: 70px;
-        padding: 20px 8px;
     }
 
-    .logo img {
-        width: 48px;
-    }
-
-    .sidebar a {
-        text-align: center;
-        padding: 14px 5px;
-        font-size: 0;
-    }
-
-    .sidebar a i {
-        font-size: 18px;
-        width: auto;
-    }
-
-    .main {
+    .right-side {
         margin-left: 70px;
-        padding: 18px;
     }
 
-    .form-grid {
-        grid-template-columns: 1fr;
-        gap: 0;
+    .logo-area {
+        height: 100px;
     }
 
-    .form-card {
-        padding: 20px;
+    .logo-area img {
+        width: 48px;
+        height: 48px;
+    }
+
+    .sidebar-title,
+    .sidebar-line {
+        display: none;
+    }
+
+    .menu {
+        padding: 15px 10px;
+    }
+
+    .menu a {
+        justify-content: center;
+        padding: 12px 5px;
+    }
+
+    .menu a span {
+        display: none;
+    }
+
+    .menu a i {
+        width: auto;
+        font-size: 18px;
     }
 }
+
 </style>
 </head>
 
 <body>
 
+<!-- SIDEBAR -->
 <div class="sidebar">
-    <div class="logo">
-        <img src="../img/LogoNichias.jpg" alt="Nichias Logo">
+
+    <div class="logo-area">
+        <img
+            src="../img/LogoNichias.jpg"
+            alt="NICHIAS Logo"
+        >
     </div>
 
-    <a href="form.php" class="active">
-        <i class="fa-solid fa-file-circle-plus"></i>
-        Operator Form
-    </a>
+    <div class="sidebar-title">
+        <h2>OPERATOR SYSTEM</h2>
+        <p>Waste Recycle</p>
+    </div>
 
-    <a href="record.php">
-        <i class="fa-solid fa-folder-open"></i>
-        Records
-    </a>
+    <div class="sidebar-line"></div>
 
-    <a href="../login.php">
-        <i class="fa-solid fa-right-from-bracket"></i>
-        Back to Login
-    </a>
+    <div class="menu">
+
+        <a href="form.php" class="active">
+            <i class="fa-solid fa-file-pen"></i>
+            <span>Form</span>
+        </a>
+
+        <a href="record.php">
+            <i class="fa-solid fa-folder-open"></i>
+            <span>Records</span>
+        </a>
+
+    </div>
+
 </div>
+
 
 <div class="main">
 
