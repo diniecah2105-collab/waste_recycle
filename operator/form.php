@@ -517,14 +517,12 @@ body {
 
     </div>
 
-</div>
 
 
-<div class="main">
+</div><!-- Penutup sidebar -->
 
 
-<div class="right-side">
-
+    <!-- TOP HEADER: kekalkan kod header awak -->
     <div class="top-header">
         <div class="header-right">
             <div class="operator-profile">
@@ -534,13 +532,27 @@ body {
                 <span>OPERATOR</span>
             </div>
 
-            <a href="../login.php" class="logout-btn">
+            <a href="../login.php"
+               class="logout-btn"
+               title="Logout">
                 <i class="fa-solid fa-right-from-bracket"></i>
             </a>
         </div>
     </div>
 
+    <!-- CONTENT FORM -->
     <div class="main">
+
+        <!-- Kekalkan page-title, subtitle,
+             form-card dan keseluruhan form asal di sini -->
+
+    </div>
+
+</div><!-- Penutup right-side -->
+
+</body>
+</html>
+
 
         <!-- KEKALKAN SEMUA KOD FORM ASAL DI SINI -->
 
