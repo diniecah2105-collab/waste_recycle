@@ -1,557 +1,473 @@
+
 <?php
 session_start();
 require_once __DIR__ . "/../db.php";
 
-// ============================================
-// CHECK ADMIN LOGIN
-// ============================================
-if (
-    !isset($_SESSION['admin_login']) ||
-    $_SESSION['admin_login'] !== true
-) {
-    header("Location: ../login.php");
-    exit;
-}
+$message = "";
+$error = "";
 
-// ============================================
-// DELETE RECORD - DALAM FILE YANG SAMA
-// ============================================
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id'])) {
+$id = "";
+$date = date('Y-m-d');
+$name = "";
+$shift = "";
+$powder = "";
+$scrap = "";
+$edit_mode = false;
 
-    $id = filter_var($_POST['delete_id'], FILTER_VALIDATE_INT);
+// ======================================
+// GET RECORD FOR EDIT
+// ======================================
+if (isset($_GET['id'])) {
+    $id = filter_var($_GET['id'], FILTER_VALIDATE_INT);
 
     if ($id && $id > 0) {
-        $stmt = mysqli_prepare($conn, "DELETE FROM operator WHERE id = ?");
+        $stmt = mysqli_prepare(
+            $conn,
+            "SELECT * FROM operator WHERE id = ?"
+        );
 
-        if ($stmt) {
-            mysqli_stmt_bind_param($stmt, "i", $id);
-            mysqli_stmt_execute($stmt);
+        mysqli_stmt_bind_param($stmt, "i", $id);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+
+        if ($row = mysqli_fetch_assoc($result)) {
+            $edit_mode = true;
+            $date = $row['date'];
+            $name = $row['name'];
+            $shift = $row['shift'];
+            $powder = $row['output_powder'];
+            $scrap = $row['qty_scarp'];
+        } else {
+            $error = "Record not found.";
+            $id = "";
+        }
+
+        mysqli_stmt_close($stmt);
+    }
+}
+
+// ======================================
+// SAVE OR UPDATE RECORD
+// ======================================
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    $id = filter_var(
+        $_POST['id'] ?? '',
+        FILTER_VALIDATE_INT
+    );
+
+    $date = trim($_POST['date'] ?? '');
+    $name = trim($_POST['name'] ?? '');
+    $shift = trim($_POST['shift'] ?? '');
+    $powder = trim($_POST['output_powder'] ?? '');
+    $scrap = trim($_POST['qty_scarp'] ?? '');
+
+    $edit_mode = ($id !== false && $id > 0);
+
+    if (
+        $date === '' ||
+        $name === '' ||
+        $shift === '' ||
+        $powder === '' ||
+        $scrap === ''
+    ) {
+        $error = "Please fill in all fields.";
+    } elseif (!is_numeric($powder) || !is_numeric($scrap)) {
+        $error = "Powder and Scrap must be numbers.";
+    } else {
+
+        if ($edit_mode) {
+            $sql = "UPDATE operator
+                    SET date = ?, name = ?, shift = ?,
+                        output_powder = ?, qty_scarp = ?
+                    WHERE id = ?";
+
+            $stmt = mysqli_prepare($conn, $sql);
+
+            mysqli_stmt_bind_param(
+                $stmt,
+                "ssssdi",
+                $date,
+                $name,
+                $shift,
+                $powder,
+                $scrap,
+                $id
+            );
+
+        } else {
+            $sql = "INSERT INTO operator
+                    (date, name, shift, output_powder, qty_scarp)
+                    VALUES (?, ?, ?, ?, ?)";
+
+            $stmt = mysqli_prepare($conn, $sql);
+
+            mysqli_stmt_bind_param(
+                $stmt,
+                "ssssd",
+                $date,
+                $name,
+                $shift,
+                $powder,
+                $scrap
+            );
+        }
+
+        if ($stmt && mysqli_stmt_execute($stmt)) {
             mysqli_stmt_close($stmt);
+
+            header("Location: form.php?success=1");
+            exit;
+        } else {
+            $error = "Unable to save record. Please try again.";
+
+            if ($stmt) {
+                mysqli_stmt_close($stmt);
+            }
         }
     }
-
-    header("Location: operator_record.php");
-    exit;
 }
 
-// ============================================
-// GET OPERATOR RECORDS
-// ============================================
-$sql = "SELECT id, date, name, shift, output_powder, qty_scarp
-        FROM operator
-        ORDER BY date DESC, id DESC";
-
-$result = mysqli_query($conn, $sql);
-
-if (!$result) {
-    die("Database error: " . htmlspecialchars(mysqli_error($conn)));
-}
-
-// Group records by month
-$recordsByMonth = [];
-
-while ($row = mysqli_fetch_assoc($result)) {
-    $monthKey = date('Y-m', strtotime($row['date']));
-    $monthLabel = date('F Y', strtotime($row['date']));
-
-    if (!isset($recordsByMonth[$monthKey])) {
-        $recordsByMonth[$monthKey] = [
-            'label' => $monthLabel,
-            'records' => []
-        ];
-    }
-
-    $recordsByMonth[$monthKey]['records'][] = $row;
+if (isset($_GET['success'])) {
+    $message = "Record saved successfully!";
 }
 
 function e($value) {
-    return htmlspecialchars((string)($value ?? ''), ENT_QUOTES, 'UTF-8');
+    return htmlspecialchars(
+        (string)($value ?? ''),
+        ENT_QUOTES,
+        'UTF-8'
+    );
 }
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Operator Form - Waste Recycle System</title>
 
-    <title>Operator Records</title>
+<link rel="stylesheet"
+ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f6fb;
+    color: #222;
+}
 
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f6fb;
-            color: #222;
-        }
+.sidebar {
+    width: 235px;
+    height: 100vh;
+    background: #1e1768;
+    color: white;
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding: 25px 15px;
+}
 
-        .sidebar {
-            width: 235px;
-            height: 100vh;
-            background: #1e1768;
-            color: white;
-            position: fixed;
-            top: 0;
-            left: 0;
-            padding: 25px 15px;
-        }
+.logo {
+    text-align: center;
+    margin-bottom: 35px;
+}
 
-        .logo {
-            text-align: center;
-            margin-bottom: 35px;
-        }
+.logo img {
+    width: 150px;
+    max-width: 100%;
+    background: white;
+    padding: 8px;
+    border-radius: 8px;
+}
 
-        .logo img {
-            width: 150px;
-            max-width: 100%;
-            height: auto;
-            object-fit: contain;
-            background: white;
-            padding: 8px;
-            border-radius: 8px;
-        }
+.sidebar a {
+    display: block;
+    color: white;
+    text-decoration: none;
+    padding: 14px 15px;
+    margin-bottom: 8px;
+    border-radius: 7px;
+    font-size: 14px;
+}
 
-        .sidebar a {
-            display: block;
-            color: white;
-            text-decoration: none;
-            padding: 14px 15px;
-            margin-bottom: 8px;
-            border-radius: 7px;
-            font-size: 14px;
-        }
+.sidebar a:hover,
+.sidebar a.active {
+    background: #40369a;
+}
 
-        .sidebar a:hover,
-        .sidebar a.active {
-            background: #40369a;
-        }
+.sidebar a i {
+    width: 25px;
+}
 
-        .sidebar a i {
-            width: 25px;
-        }
+.main {
+    margin-left: 235px;
+    padding: 30px;
+}
 
-        .main {
-            margin-left: 235px;
-            padding: 30px;
-        }
+.page-title {
+    color: #243b7a;
+    font-size: 27px;
+    margin-bottom: 8px;
+}
 
-        .page-title {
-            font-size: 27px;
-            color: #243b7a;
-            margin-bottom: 8px;
-        }
+.subtitle {
+    color: #777;
+    margin-bottom: 25px;
+    font-size: 14px;
+}
 
-        .subtitle {
-            color: #777;
-            margin-bottom: 25px;
-            font-size: 14px;
-        }
+.form-card {
+    background: white;
+    max-width: 850px;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,.06);
+}
 
-        .search-box {
-            width: 100%;
-            max-width: 400px;
-            padding: 12px 15px;
-            border: 1px solid #d5d9e4;
-            border-radius: 8px;
-            font-size: 14px;
-            margin-bottom: 22px;
-            outline: none;
-        }
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
 
-        .search-box:focus {
-            border-color: #2f4da0;
-        }
+.form-group {
+    margin-bottom: 20px;
+}
 
-        .month-card {
-            background: white;
-            border-radius: 10px;
-            margin-bottom: 18px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-            overflow: hidden;
-        }
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+}
 
-        .month-header {
-            width: 100%;
-            border: none;
-            background: #243b7a;
-            color: white;
-            padding: 17px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-            text-align: left;
-        }
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #d5d9e4;
+    border-radius: 7px;
+    font-size: 14px;
+}
 
-        .month-header:hover {
-            background: #2f4da0;
-        }
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #2f4da0;
+}
 
-        .month-header .month-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+.actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 5px;
+}
 
-        .count {
-            background: white;
-            color: #243b7a;
-            border-radius: 20px;
-            padding: 4px 10px;
-            font-size: 12px;
-        }
+.btn {
+    border: none;
+    padding: 12px 20px;
+    border-radius: 7px;
+    color: white;
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 14px;
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+}
 
-        .month-content {
-            display: none;
-            padding: 18px;
-            overflow-x: auto;
-        }
+.btn-save {
+    background: #243b7a;
+}
 
-        .month-content.show {
-            display: block;
-        }
+.btn-save:hover {
+    background: #2f4da0;
+}
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 850px;
-        }
+.btn-reset {
+    background: #6c757d;
+}
 
-        th {
-            background: #eef1fb;
-            color: #243b7a;
-            text-align: left;
-            padding: 13px 12px;
-            font-size: 13px;
-            white-space: nowrap;
-        }
+.alert {
+    padding: 13px;
+    margin-bottom: 20px;
+    border-radius: 7px;
+    font-size: 14px;
+}
 
-        td {
-            padding: 13px 12px;
-            border-bottom: 1px solid #eee;
-            font-size: 13px;
-        }
+.success {
+    background: #d9f7e3;
+    color: #176b35;
+}
 
-        tr:hover td {
-            background: #fafbff;
-        }
+.error {
+    background: #ffe5e5;
+    color: #b42323;
+}
 
-        .actions {
-            display: flex;
-            gap: 7px;
-            align-items: center;
-        }
+@media(max-width: 800px) {
+    .sidebar {
+        width: 70px;
+        padding: 20px 8px;
+    }
 
-        .btn {
-            border: none;
-            padding: 8px 11px;
-            border-radius: 5px;
-            color: white;
-            cursor: pointer;
-            font-size: 12px;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-            white-space: nowrap;
-        }
+    .logo img {
+        width: 48px;
+    }
 
-        .btn-edit {
-            background: #e69a18;
-        }
+    .sidebar a {
+        text-align: center;
+        padding: 14px 5px;
+        font-size: 0;
+    }
 
-        .btn-edit:hover {
-            background: #c47e06;
-        }
+    .sidebar a i {
+        font-size: 18px;
+        width: auto;
+    }
 
-        .btn-delete {
-            background: #dc3545;
-        }
+    .main {
+        margin-left: 70px;
+        padding: 18px;
+    }
 
-        .btn-delete:hover {
-            background: #b92332;
-        }
+    .form-grid {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
 
-        .delete-form {
-            display: inline;
-            margin: 0;
-        }
-
-        .empty {
-            background: white;
-            padding: 35px;
-            text-align: center;
-            border-radius: 10px;
-            color: #777;
-        }
-
-        .empty i {
-            display: block;
-            font-size: 35px;
-            margin-bottom: 12px;
-            color: #aab1c4;
-        }
-
-        @media (max-width: 800px) {
-            .sidebar {
-                width: 70px;
-                padding: 20px 8px;
-            }
-
-            .logo img {
-                width: 48px;
-            }
-
-            .sidebar a {
-                text-align: center;
-                padding: 14px 5px;
-                font-size: 0;
-            }
-
-            .sidebar a i {
-                font-size: 18px;
-                width: auto;
-            }
-
-            .main {
-                margin-left: 70px;
-                padding: 18px;
-            }
-
-            .page-title {
-                font-size: 23px;
-            }
-        }
-    </style>
+    .form-card {
+        padding: 20px;
+    }
+}
+</style>
 </head>
 
 <body>
 
-<!-- SIDEBAR -->
 <div class="sidebar">
-
     <div class="logo">
         <img src="../img/LogoNichias.jpg" alt="Nichias Logo">
     </div>
 
-    <a href="dashboard.php">
-        <i class="fa-solid fa-chart-line"></i> Dashboard
+    <a href="form.php" class="active">
+        <i class="fa-solid fa-file-circle-plus"></i>
+        Operator Form
     </a>
 
-    <a href="admin_form.php">
-        <i class="fa-solid fa-file-circle-plus"></i> Admin Form
+    <a href="record.php">
+        <i class="fa-solid fa-folder-open"></i>
+        Records
     </a>
 
-    <a href="admin_record.php">
-        <i class="fa-solid fa-folder-open"></i> Admin Records
+    <a href="../login.php">
+        <i class="fa-solid fa-right-from-bracket"></i>
+        Back to Login
     </a>
-
-    <a href="operator_record.php" class="active">
-        <i class="fa-solid fa-users"></i> Operator Records
-    </a>
-
-    <a href="../logout.php">
-        <i class="fa-solid fa-right-from-bracket"></i> Logout
-    </a>
-
 </div>
 
-<!-- MAIN CONTENT -->
 <div class="main">
 
     <h1 class="page-title">
-        <i class="fa-solid fa-users"></i> Operator Records
+        <i class="fa-solid fa-users"></i>
+        <?= $edit_mode ? 'Edit Operator Record' : 'Operator Form' ?>
     </h1>
 
     <p class="subtitle">
-        View, edit and delete operator records by month.
+        Enter and manage daily operator production records.
     </p>
 
-    <input
-        type="text"
-        id="searchInput"
-        class="search-box"
-        placeholder="Search name, shift or date..."
-        onkeyup="searchRecords()"
-    >
+    <div class="form-card">
 
-    <?php if (empty($recordsByMonth)): ?>
+        <?php if ($message !== ''): ?>
+            <div class="alert success">
+                <i class="fa-solid fa-circle-check"></i>
+                <?= e($message) ?>
+            </div>
+        <?php endif; ?>
 
-        <div class="empty">
-            <i class="fa-solid fa-folder-open"></i>
-            No operator records found.
-        </div>
+        <?php if ($error !== ''): ?>
+            <div class="alert error">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                <?= e($error) ?>
+            </div>
+        <?php endif; ?>
 
-    <?php else: ?>
+        <form method="POST" action="form.php<?= $edit_mode ? '?id=' . (int)$id : '' ?>">
 
-        <?php foreach ($recordsByMonth as $monthKey => $monthData): ?>
+            <input type="hidden" name="id"
+                   value="<?= $edit_mode ? (int)$id : '' ?>">
 
-            <div class="month-card">
+            <div class="form-grid">
 
-                <button
-                    type="button"
-                    class="month-header"
-                    onclick="toggleMonth(this)"
-                >
-                    <span class="month-info">
-                        <i class="fa-regular fa-calendar"></i>
-                        <?= e($monthData['label']) ?>
-
-                        <span class="count">
-                            <?= count($monthData['records']) ?> records
-                        </span>
-                    </span>
-
-                    <i class="fa-solid fa-chevron-down"></i>
-                </button>
-
-                <div class="month-content">
-
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>No.</th>
-                                <th>Date</th>
-                                <th>Operator Name</th>
-                                <th>Shift</th>
-                                <th>Output Powder</th>
-                                <th>Qty Scrap</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-
-                        <?php $no = 1; ?>
-
-                        <?php foreach ($monthData['records'] as $row): ?>
-
-                            <tr class="record-row">
-                                <td><?= $no++ ?></td>
-
-                                <td><?= e($row['date']) ?></td>
-
-                                <td class="search-name">
-                                    <?= e($row['name']) ?>
-                                </td>
-
-                                <td class="search-shift">
-                                    <?= e($row['shift']) ?>
-                                </td>
-
-                                <td>
-                                    <?= e($row['output_powder']) ?>
-                                </td>
-
-                                <td>
-                                    <?= e($row['qty_scarp']) ?>
-                                </td>
-
-                                <td>
-                                    <div class="actions">
-
-                                        <!-- EDIT: BUKA FORM DENGAN ID REKOD -->
-                                        <a
-                                            class="btn btn-edit"
-                                            href="../operator/form.php?id=<?= (int)$row['id'] ?>"
-                                            title="Edit this record"
-                                        >
-                                            <i class="fa-solid fa-pen-to-square"></i>
-                                            Edit
-                                        </a>
-
-                                        <!-- DELETE: PADAM TERUS DALAM FILE INI -->
-                                        <form
-                                            method="POST"
-                                            class="delete-form"
-                                            onsubmit="return confirm('Are you sure you want to delete this record? This action cannot be undone.');"
-                                        >
-                                            <input
-                                                type="hidden"
-                                                name="delete_id"
-                                                value="<?= (int)$row['id'] ?>"
-                                            >
-
-                                            <button
-                                                type="submit"
-                                                class="btn btn-delete"
-                                                title="Delete this record"
-                                            >
-                                                <i class="fa-solid fa-trash"></i>
-                                                Delete
-                                            </button>
-                                        </form>
-
-                                    </div>
-                                </td>
-                            </tr>
-
-                        <?php endforeach; ?>
-
-                        </tbody>
-                    </table>
-
+                <div class="form-group">
+                    <label for="date">Date</label>
+                    <input type="date" id="date" name="date"
+                           value="<?= e($date) ?>" required>
                 </div>
+
+                <div class="form-group">
+                    <label for="name">Operator Name</label>
+                    <input type="text" id="name" name="name"
+                           value="<?= e($name) ?>"
+                           placeholder="Enter operator name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="shift">Shift</label>
+                    <select id="shift" name="shift" required>
+                        <option value="">Select Shift</option>
+                        <option value="Day" <?= $shift === 'Day' ? 'selected' : '' ?>>
+                            Day
+                        </option>
+                        <option value="Night" <?= $shift === 'Night' ? 'selected' : '' ?>>
+                            Night
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="output_powder">Output Powder</label>
+                    <input type="number" step="any" min="0"
+                           id="output_powder" name="output_powder"
+                           value="<?= e($powder) ?>"
+                           placeholder="Enter output powder" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="qty_scarp">Qty Scrap</label>
+                    <input type="number" step="any" min="0"
+                           id="qty_scarp" name="qty_scarp"
+                           value="<?= e($scrap) ?>"
+                           placeholder="Enter quantity scrap" required>
+                </div>
+
             </div>
 
-        <?php endforeach; ?>
+            <div class="actions">
+                <button type="submit" class="btn btn-save">
+                    <i class="fa-solid fa-floppy-disk"></i>
+                    <?= $edit_mode ? 'Update Record' : 'Save Record' ?>
+                </button>
 
-    <?php endif; ?>
+                <a href="form.php" class="btn btn-reset">
+                    <i class="fa-solid fa-rotate-left"></i>
+                    Clear
+                </a>
+            </div>
 
+        </form>
+    </div>
 </div>
-
-<script>
-function toggleMonth(button) {
-    const content = button.nextElementSibling;
-    const icon = button.querySelector('.fa-chevron-down');
-
-    content.classList.toggle('show');
-
-    if (icon) {
-        icon.style.transform = content.classList.contains('show')
-            ? 'rotate(180deg)'
-            : 'rotate(0deg)';
-    }
-}
-
-function searchRecords() {
-    const input = document.getElementById('searchInput');
-    const filter = input.value.toLowerCase();
-
-    document.querySelectorAll('.month-card').forEach(function(card) {
-        const rows = card.querySelectorAll('.record-row');
-        let found = 0;
-
-        rows.forEach(function(row) {
-            const text = row.innerText.toLowerCase();
-            const match = text.includes(filter);
-
-            row.style.display = match ? '' : 'none';
-
-            if (match) {
-                found++;
-            }
-        });
-
-        card.style.display = found > 0 ? '' : 'none';
-
-        if (filter !== '' && found > 0) {
-            card.querySelector('.month-content').classList.add('show');
-        }
-    });
-}
-</script>
 
 </body>
 </html>
