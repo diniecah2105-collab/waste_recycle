@@ -76,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = "Please fill in all fields.";
 
     } elseif (
-        !in_array($shift, ['Day', 'Night'], true) ||
+        !in_array($shift, ['Normal', 'Morning', 'Afternoon', 'Night'], true) ||
         !is_numeric($powder) ||
         !is_numeric($scrap) ||
         (float)$powder < 0 ||
@@ -188,7 +188,7 @@ body {
     position: fixed;
     top: 0;
     left: 0;
-    background: #087f83;
+    background: #1e1768;
     color: white;
     overflow-y: auto;
     z-index: 10;
@@ -309,7 +309,7 @@ body {
     justify-content: center;
     border-radius: 50%;
     background: #e9eef0;
-    color: #087f83;
+    color: #1e1768;
 }
 
 .logout-btn {
@@ -320,7 +320,7 @@ body {
     justify-content: center;
     border: 1px solid #ddd;
     border-radius: 8px;
-    color: #087f83;
+    color: #1e1768;
     text-decoration: none;
     font-size: 17px;
 }
@@ -400,7 +400,7 @@ body {
 
 .form-group input:focus,
 .form-group select:focus {
-    border-color: #37876d;
+    border-color: #1e1768;
     box-shadow: 0 0 0 2px rgba(55,135,109,.1);
 }
 
@@ -413,8 +413,8 @@ body {
     content: "POWDER";
     display: block;
     padding-bottom: 8px;
-    border-bottom: 1px solid #37876d;
-    color: #37876d;
+    border-bottom: 1px solid #1e1768;
+    color: #1e1768;
     font-size: 13px;
     font-weight: bold;
 }
@@ -428,8 +428,8 @@ body {
     content: "SCRAP TOMBO";
     display: block;
     padding-bottom: 8px;
-    border-bottom: 1px solid #37876d;
-    color: #37876d;
+    border-bottom: 1px solid #1e1768;
+    color: #1e1768;
     font-size: 13px;
     font-weight: bold;
 }
@@ -592,32 +592,40 @@ body {
 
 <body>
 
+
 <!-- SIDEBAR -->
-<aside class="sidebar">
+<div class="sidebar">
 
     <div class="logo-area">
-        <img src="../img/LogoNichias.jpg" alt="NICHIAS Logo">
+        <img
+            src="../img/LogoNichias.jpg"
+            alt="NICHIAS Logo"
+        >
     </div>
 
     <div class="sidebar-title">
-        <h2>WASTE RECYCLE SYSTEM</h2>
+        <h2>OPERATOR SYSTEM</h2>
+        <p>Waste Recycle</p>
     </div>
 
     <div class="sidebar-line"></div>
 
-    <nav class="menu">
+    <div class="menu">
+
         <a href="form.php" class="active">
-            <i class="fa-solid fa-house"></i>
-            <span>Home</span>
+            <i class="fa-solid fa-file-pen"></i>
+            <span>Form</span>
         </a>
 
         <a href="record.php">
             <i class="fa-solid fa-folder-open"></i>
             <span>Records</span>
         </a>
-    </nav>
 
-</aside>
+    </div>
+
+</div>
+
 
 <!-- RIGHT SIDE -->
 <div class="right-side">
@@ -689,9 +697,17 @@ body {
                         <label for="shift">Shift:</label>
                         <select id="shift" name="shift" required>
                             <option value="">Select Shift</option>
-                            <option value="Day"
-                                <?= $shift === 'Day' ? 'selected' : '' ?>>
-                                Day
+                            <option value="Normal"
+                                <?= $shift === 'Normal' ? 'selected' : '' ?>>
+                                Normal
+                            </option>
+                            <option value="Morning"
+                                <?= $shift === 'Morning' ? 'selected' : '' ?>>
+                                Morning
+                            </option>
+                            <option value="Afternoon"
+                                <?= $shift === 'Afternoon' ? 'selected' : '' ?>>
+                                Afternoon
                             </option>
                             <option value="Night"
                                 <?= $shift === 'Night' ? 'selected' : '' ?>>
