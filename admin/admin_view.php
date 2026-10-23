@@ -245,7 +245,14 @@ body{font-family:Arial,Helvetica,sans-serif;background:#f4f7fb;color:#333}
         <a href="admin_record.php" class="active"><span class="menu-icon"><i class="fa-solid fa-folder-open"></i></span>Admin Records</a>
         <a href="operator_record.php"><span class="menu-icon"><i class="fa-solid fa-users-gear"></i></span>Operator Records</a>
     </div>
-    <div class="logout"><a href="../logout.php"><span class="menu-icon"><i class="fa-solid fa-right-from-bracket"></i></span>Logout</a></div>
+    <div class="logout">
+    <a href="../login.php"
+       onclick="return confirm('Are you sure you want to logout?');">
+        <span class="menu-icon">
+            <i class="fa-solid fa-right-from-bracket"></i>
+        </span>
+        <span>Logout</span>
+    </a>
 </div>
 
 <div class="main">
