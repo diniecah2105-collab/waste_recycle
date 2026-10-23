@@ -12,6 +12,7 @@ CHECK ADMIN LOGIN
 =========================================================
 */
 
+
 if (!isset($_SESSION['admin_login']) || $_SESSION['admin_login'] !== true) {
 
     header("Location: ../login.php");
@@ -940,18 +941,14 @@ body {
 
 
     <div class="logout">
-
-        <a href="../logout.php">
-
-            <span class="menu-icon">
-                <i class="fa-solid fa-right-from-bracket"></i>
-            </span>
-
-            <span>Logout</span>
-
-        </a>
-
-    </div>
+    <a href="../login.php"
+       onclick="return confirm('Are you sure you want to logout?');">
+        <span class="menu-icon">
+            <i class="fa-solid fa-right-from-bracket"></i>
+        </span>
+        <span>Logout</span>
+    </a>
+</div>
 
 </div>
 
