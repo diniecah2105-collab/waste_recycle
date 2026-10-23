@@ -1749,28 +1749,15 @@ body {
     </div>
 
 
-    <div class="logout">
-
-
-        <a href="../logout.php">
-
-            <span class="menu-icon">
-
-                <i class="fa-solid fa-right-from-bracket"></i>
-
-            </span>
-
-
-            <span>
-
-                Logout
-
-            </span>
-
-        </a>
-
-
-    </div>
+  <div class="logout">
+    <a href="../login.php"
+       onclick="return confirm('Are you sure you want to logout?');">
+        <span class="menu-icon">
+            <i class="fa-solid fa-right-from-bracket"></i>
+        </span>
+        <span>Logout</span>
+    </a>
+</div>
 
 
 </div>

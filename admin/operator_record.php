@@ -596,13 +596,14 @@ tbody tr:not(.total-row):hover td {
     </div>
 
     <div class="logout">
-        <a href="../login.php">
-            <span class="menu-icon">
-                <i class="fa-solid fa-right-from-bracket"></i>
-            </span>
-            <span>Logout</span>
-        </a>
-    </div>
+    <a href="../login.php"
+       onclick="return confirm('Are you sure you want to logout?');">
+        <span class="menu-icon">
+            <i class="fa-solid fa-right-from-bracket"></i>
+        </span>
+        <span>Logout</span>
+    </a>
+</div>
 
 </div>
 
@@ -771,14 +772,13 @@ tbody tr:not(.total-row):hover td {
                                 <td class="action-cell">
 
                                     <!-- EDIT: KEKAL GUNA form.php -->
-                                    <<a
-                                        href="../operator/edit.php?id=<?= (int)$row['id'] ?>"
-                                        class="edit-btn"
-                                    >
-                                        <i class="fa-solid fa-pen-to-square"></i>
-                                        Edit
-                                    </a>
-
+                                    <a
+    href="../operator/form.php?id=<?= (int)$row['id'] ?>"
+    class="edit-btn"
+>
+    <i class="fa-solid fa-pen-to-square"></i>
+    Edit
+</a>
                                     <!-- DELETE: DALAM FAIL INI -->
                                     <form
                                         method="POST"
