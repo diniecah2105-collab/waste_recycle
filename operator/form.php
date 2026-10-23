@@ -202,13 +202,16 @@ body {
     border-bottom: 1px solid rgba(255,255,255,.2);
 }
 
+
 .logo-area img {
-    width: 76px;
-    height: 76px;
+    width: 72px;
+    height: 72px;
     object-fit: contain;
-    background: white;
+    background: #fff;
     padding: 5px;
+    display: block;
 }
+
 
 .sidebar-title {
     text-align: center;

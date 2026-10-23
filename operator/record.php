@@ -365,139 +365,66 @@ body {
    TOP HEADER
 ================================================== */
 
+/* TOP HEADER — SAMA DENGAN FORM */
 .top-header {
-
-    width: 100%;
-
     height: 70px;
-
+    min-height: 70px;
+    width: 100%;
     background: white;
-
     display: flex;
-
     align-items: center;
-
     justify-content: flex-end;
-
-    padding: 0 35px;
-
+    padding: 0 30px;
     border-bottom: 1px solid #ddd;
-
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-
+    box-shadow: 0 2px 8px rgba(0,0,0,.04);
     flex-shrink: 0;
-
 }
-
-
-/* ==================================================
-   HEADER RIGHT
-================================================== */
 
 .header-right {
-
     display: flex;
-
     align-items: center;
-
-    gap: 15px;
-
+    gap: 12px;
 }
-
-
-/* ==================================================
-   OPERATOR PROFILE
-================================================== */
 
 .operator-profile {
-
     display: flex;
-
     align-items: center;
-
     gap: 10px;
-
-    padding: 6px 18px 6px 6px;
-
+    padding: 5px 16px 5px 5px;
     border: 1px solid #ddd;
-
     border-radius: 30px;
-
     background: white;
-
-    font-size: 15px;
-
+    font-size: 13px;
     font-weight: bold;
-
-    color: #222;
-
 }
-
-
-/* ==================================================
-   PROFILE ICON
-================================================== */
 
 .profile-icon {
-
     width: 35px;
-
     height: 35px;
-
     display: flex;
-
     align-items: center;
-
     justify-content: center;
-
     border-radius: 50%;
-
     background: #e9eef0;
-
-    color: #243b7a;
-
-    font-size: 16px;
-
+    color: #1e1768;
 }
-
-
-/* ==================================================
-   LOGOUT BUTTON
-================================================== */
 
 .logout-btn {
-
-    width: 45px;
-
-    height: 45px;
-
+    width: 42px;
+    height: 42px;
     display: flex;
-
     align-items: center;
-
     justify-content: center;
-
-    text-decoration: none;
-
     border: 1px solid #ddd;
-
-    border-radius: 10px;
-
+    border-radius: 8px;
+    color: #1e1768;
     background: white;
-
-    color: #222;
-
-    font-size: 18px;
-
-    transition: 0.2s;
-
+    text-decoration: none;
+    font-size: 17px;
 }
 
-
 .logout-btn:hover {
-
     background: #f2f2f2;
-
 }
 
 
