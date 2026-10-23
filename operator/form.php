@@ -496,6 +496,29 @@ body {
         >
     </div>
 
+
+<!-- RIGHT SIDE -->
+<div class="right-side">
+
+    <!-- HEADER -->
+    <div class="top-header">
+        <div class="header-right">
+            <div class="operator-profile">
+                <span class="profile-icon">
+                    <i class="fa-solid fa-user"></i>
+                </span>
+                <span>OPERATOR</span>
+            </div>
+
+            <a href="../login.php" class="logout-btn" title="Logout">
+                <i class="fa-solid fa-right-from-bracket"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main">
+
     <div class="sidebar-title">
         <h2>OPERATOR SYSTEM</h2>
         <p>Waste Recycle</p>
